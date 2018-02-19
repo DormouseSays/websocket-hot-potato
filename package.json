@@ -1,0 +1,18 @@
+{
+  "name": "hotpotato",
+  "version": "1.0.0",
+  "description": "websocket hot potato game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^0.6.2",
+    "express": "^4.16.2",
+    "express-ws": "^3.0.0",
+    "vue": "^2.5.13",
+    "ws": "^4.0.0"
+  }
+}

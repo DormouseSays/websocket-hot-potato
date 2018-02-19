@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HotPotato</title>
+    <meta name="description" content="HotPotato">
+
+    <link rel="stylesheet" href="lib/bulma.css?v=1.0">
+    <link rel="stylesheet" href="style/potato.css?v=1.0">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div>Current game state: {{state}}. Id: {{userId}}.
+                <span v-if="order != null">Your order is {{order}}.</span>
+            </div>
+            <div class="columns">
+                <div v-for="player in players" class="column">
+                    {{player.name}} is
+                    <span v-if="player.ready">Ready</span>
+                    <span v-else>Not Ready</span>. Order: {{player.order}}.
+                </div>
+
+            </div>
+        </div>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">
+                    Hot Potato
+                </h1>
+                <p class="subtitle">
+                    Play
+                    <strong>Hot Potato</strong> with friends on phones!
+                </p>
+                <div v-if="state == 'lobby'">
+                    <span v-if="allReady">
+                        <div>Play with {{players.length}} players.</div>
+                        <a v-on:click="onStart" class="button is-success">Start Game</a>
+                    </span>
+                    <span v-else-if="ready">
+                        <h2>Waiting for other players...</h2>
+                        <a class="button is-warning">Cancel</a>
+                    </span>
+                    <span v-else>
+                        <h1>Join Game</h1>
+                        <div class="field">Enter your name</div>
+                        <div class="field">
+                            <input v-model="name" class="input">
+                        </div>
+                        <div>
+                            <a v-on:click="onJoin" class="button is-success">Join</a>
+                        </div>
+                    </span>
+                    <div>{{readyMessage}}</div>
+                </div>
+                <div v-else-if="state == 'order'">
+                    <div class="subtitle">Set order</div>
+                    <div v-if="order != null">
+                        Your order is {{order}}.
+                    </div>
+                    <div v-else>
+                        Go around the circle clockwise from the starting player with order 1. When it gets to you, tap the
+                        <strong>set order</strong> button.
+                        <a v-on:click="onOrder" class="button is-success">Set order</a>
+                    </div>
+                </div>
+                <div v-else-if="state == 'game'">
+                    <div class="subtitle">Now Playing</div>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-dark is-large">Shields</span>
+                                <span class="tag is-info is-large">{{shields}}</span>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-dark is-large">Reverses</span>
+                                <span class="tag is-warning is-large">{{reverses}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="currentPlayerId == userId">
+                        <div>You're up!</div>
+                        <div>
+                            <a v-on:click="onPass" class="button is-success">Pass &gt;</a>
+                        </div>
+                        <div v-if="reverses > 0">
+                            <a v-on:click="onReverse" class="button is-warning">&lt; Reverse</a>
+                        </div>
+                        <div v-else>
+                            <a class="button is-warning" disabled>&lt; Reverse</a>
+                        </div>
+                        <div v-if="shields > 0">
+                            <a v-on:click="onShield" class="button is-info">Shield</a>
+                        </div>
+                        <div v-else>
+                            <a class="button is-info" disabled>Shield</a>
+                        </div>
+                        <!-- 'reverse' button, only one reverse per game? -->
+                    </div>
+                    <div v-else>Waiting...</div>
+
+                </div>
+                <div v-else-if="state == 'boom'">
+                    <div class="subtitle">Now Playing</div>
+                    <div v-if="currentPlayerId == userId">
+                        <div>Boom!</div>
+                        <div v-if="score == 0">You Lost :(</div>
+                        <div v-else>Shielded! You survived!</div>
+                    </div>
+                    <div v-else>Someone else got hit. You win!</div>
+                    <div>
+                        <a v-on:click="onRestart" class="button is-success">Start a new game</a>
+                    </div>
+                </div>
+                <div v-else-if="state == 'failure'">
+                    There was a problem joining the game.
+                </div>
+                <div class="info">{{errorMessage}}</div>
+            </div>
+        </section>
+    </div>
+    <div id="log"></div>
+    <script src="lib/vue.js"></script>
+    <script src="script/storage.js"></script>
+    <script src="script/potato.js"></script>
+</body>
+
+</html>
